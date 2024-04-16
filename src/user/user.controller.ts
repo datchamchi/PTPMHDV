@@ -2,11 +2,12 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Param,
   ParseIntPipe,
   Post,
 } from '@nestjs/common';
-import { UserDto } from './user.dto';
+import { LoginDto, UserDto } from './user.dto';
 import { UserService } from './user.service';
 import { ApiTags } from '@nestjs/swagger';
 import { CartService } from 'src/cart/cart.service';
@@ -19,6 +20,7 @@ export class UserController {
     private readonly cartService: CartService,
   ) {}
   @Post('signup')
+  @HttpCode(201)
   async signUp(@Body() userDto: UserDto) {
     const user = await this.userService.signUp(userDto);
     await this.cartService.create({ user }); /// create cart
@@ -26,7 +28,8 @@ export class UserController {
   }
 
   @Post('login')
-  async login(@Body() data: { email: string; password: string }) {
+  @HttpCode(200)
+  async login(@Body() data: LoginDto) {
     return this.userService.login(data);
   }
   @Get('/:userId')
