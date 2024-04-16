@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
@@ -10,6 +10,13 @@ async function bootstrap() {
     new ValidationPipe({
       // whitelist: true,
       // forbidNonWhitelisted: true,
+      exceptionFactory(errors) {
+        const message = [];
+        errors.forEach((error) =>
+          message.push(error.constraints[Object.keys(error.constraints)[0]]),
+        );
+        return new BadRequestException(message);
+      },
     }),
   );
   const config = new DocumentBuilder()

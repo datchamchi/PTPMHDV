@@ -15,6 +15,10 @@ export class UserService {
   ) {}
 
   async signUp(userDto: UserDto) {
+    const existUser = await this.userRepository.findOneBy({
+      email: userDto.email,
+    });
+    if (existUser) throw new BadRequestException('Email is used');
     const user = await this.userRepository.save(userDto);
     return user;
   }
